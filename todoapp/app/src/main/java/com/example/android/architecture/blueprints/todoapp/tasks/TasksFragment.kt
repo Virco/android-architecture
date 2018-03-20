@@ -15,6 +15,7 @@
  */
 package com.example.android.architecture.blueprints.todoapp.tasks
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
@@ -97,11 +98,13 @@ class TasksFragment : Fragment(), TasksContract.View {
 
             // Set up progress indicator
             findViewById<ScrollChildSwipeRefreshLayout>(R.id.refresh_layout).apply {
-                setColorSchemeColors(
-                        ContextCompat.getColor(activity, R.color.colorPrimary),
-                        ContextCompat.getColor(activity, R.color.colorAccent),
-                        ContextCompat.getColor(activity, R.color.colorPrimaryDark)
-                )
+                with(activity as Context) {
+                    setColorSchemeColors(
+                            ContextCompat.getColor(this, R.color.colorPrimary),
+                            ContextCompat.getColor(this, R.color.colorAccent),
+                            ContextCompat.getColor(this, R.color.colorPrimaryDark)
+                    )
+                }
                 // Set the scrolling view in the custom SwipeRefreshLayout.
                 scrollUpChild = listView
                 setOnRefreshListener { presenter.loadTasks(false) }
@@ -120,9 +123,9 @@ class TasksFragment : Fragment(), TasksContract.View {
         }
 
         // Set up floating action button
-        activity.findViewById<FloatingActionButton>(R.id.fab_add_task).apply {
-            setImageResource(R.drawable.ic_add)
-            setOnClickListener { presenter.addNewTask() }
+        activity?.findViewById<FloatingActionButton>(R.id.fab_add_task).apply {
+            this?.setImageResource(R.drawable.ic_add)
+            this?.setOnClickListener { presenter.addNewTask() }
         }
         setHasOptionsMenu(true)
 
@@ -143,18 +146,22 @@ class TasksFragment : Fragment(), TasksContract.View {
     }
 
     override fun showFilteringPopUpMenu() {
-        PopupMenu(context, activity.findViewById(R.id.menu_filter)).apply {
-            menuInflater.inflate(R.menu.filter_tasks, menu)
-            setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.active -> presenter.currentFiltering = TasksFilterType.ACTIVE_TASKS
-                    R.id.completed -> presenter.currentFiltering = TasksFilterType.COMPLETED_TASKS
-                    else -> presenter.currentFiltering = TasksFilterType.ALL_TASKS
+        val context = context
+        val viewAnchor = activity?.findViewById<View>(R.id.menu_filter)
+        if (context != null && viewAnchor != null) {
+            PopupMenu(context, viewAnchor).apply {
+                menuInflater.inflate(R.menu.filter_tasks, menu)
+                setOnMenuItemClickListener { item ->
+                    when (item.itemId) {
+                        R.id.active -> presenter.currentFiltering = TasksFilterType.ACTIVE_TASKS
+                        R.id.completed -> presenter.currentFiltering = TasksFilterType.COMPLETED_TASKS
+                        else -> presenter.currentFiltering = TasksFilterType.ALL_TASKS
+                    }
+                    presenter.loadTasks(false)
+                    true
                 }
-                presenter.loadTasks(false)
-                true
+                show()
             }
-            show()
         }
     }
 
