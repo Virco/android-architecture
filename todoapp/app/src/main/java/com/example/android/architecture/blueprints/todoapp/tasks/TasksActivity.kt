@@ -31,9 +31,9 @@ import com.example.android.architecture.blueprints.todoapp.util.EspressoIdlingRe
 import com.example.android.architecture.blueprints.todoapp.util.replaceFragmentInActivity
 import com.example.android.architecture.blueprints.todoapp.util.setupActionBar
 
-class TasksActivity : AppCompatActivity() {
+private const val CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY"
 
-    private val CURRENT_FILTERING_KEY = "CURRENT_FILTERING_KEY"
+class TasksActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
 

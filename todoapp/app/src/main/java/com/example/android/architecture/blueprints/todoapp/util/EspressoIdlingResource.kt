@@ -23,7 +23,7 @@ import android.support.test.espresso.IdlingResource
  */
 object EspressoIdlingResource {
 
-    private val RESOURCE = "GLOBAL"
+    private const val RESOURCE = "GLOBAL"
 
     val countingIdlingResource = SimpleCountingIdlingResource(RESOURCE)
 
